@@ -1,0 +1,781 @@
+<style>
+  /* Set height of body and the document to 100% to enable "full page tabs" */
+  body,
+  html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial;
+  }
+
+  /* Style tab links */
+  .tablink {
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 25%;
+  }
+
+  .tablink:hover {
+    background-color: #777;
+  }
+
+  /* Style the tab content (and add height:100% for full page content) */
+  .tabcontent {
+    color: white;
+    display: none;
+    padding: 100px 20px;
+    height: fit-content;
+    min-height: 100%;
+  }
+
+  #Kids {
+    background-color: red;
+  }
+  #Adults {
+    background-color: green;
+  }
+  #School {
+    background-color: blue;
+  }
+  #MyCart {
+    background-color: blueviolet;
+  }
+
+  .books-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .book {
+    min-width: 280px;
+    min-height: 400px;
+    max-width: 280px;
+    max-height: 400px;
+    margin: 8px;
+    background-color: white;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .book p {
+    margin: 4px;
+    color: black;
+  }
+
+  .book p.desc {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* number of lines to show */
+    -webkit-box-orient: vertical;
+  }
+
+  .book p.desc {
+    padding: 0 5px;
+    margin-top: 10px;
+  }
+
+  table {
+    color: white;
+  }
+</style>
+
+<script>
+  var books = {
+    kid1: {
+      title: "Nikolasi i vogël në pushimet verore",
+      price: 400,
+    },
+    kid2: {
+      title: "Tregime të moçme shqiptare",
+      price: 650,
+    },
+    kid3: {
+      title: "Pushimet e Çufos",
+      price: 450,
+    },
+    kid4: {
+      title: "Aventurat e Tom Sojerit",
+      price: 700,
+    },
+    kid5: {
+      title: "Ditari i Gregut 9 – Çomeni ne shtepi",
+      price: 850,
+    },
+    kid6: {
+      title: "Vendi i rrefenjave",
+      price: 600,
+    },
+    kid7: {
+      title: "Agjencia Prindërore",
+      price: 550,
+    },
+    kid8: {
+      title: "Konradi",
+      price: 650,
+    },
+    adult1: {
+      title: "Burri që donte të vdiste...",
+      price: 500,
+    },
+    adult2: {
+      title: "Zhdukja e Jozef Mengelesë",
+      price: 800,
+    },
+    adult3: {
+      title: "Përtej",
+      price: 450,
+    },
+    adult4: {
+      title: "Pas xhamit të dyfishtë",
+      price: 750,
+    },
+    adult5: {
+      title: "Kafe e hidhur",
+      price: 600,
+    },
+    adult6: {
+      title: "Letërsia dhe Zotat ",
+      price: 900,
+    },
+    adult7: {
+      title: "Të sapomartuarit ",
+      price: 590,
+    },
+    adult8: {
+      title: "Dhoma e endëses",
+      price: 450,
+    },
+    school1: {
+      title: "Biologjia Për maturën shtetërore",
+      price: 850,
+    },
+    school2: {
+      title: "Ushtrime Ekonomia 12",
+      price: 900,
+    },
+    school3: {
+      title: "Olimpiada shkolla e mesme",
+      price: 450,
+    },
+    school4: {
+      title: "Matematika 3 ",
+      price: 850,
+    },
+    school5: {
+      title: "Pushimet verore 3",
+      price: 950,
+    },
+    school6: {
+      title: "Matematika për maturën shtetërore",
+      price: 1050,
+    },
+    school7: {
+      title: "Hyrje në gjuhësinë kompjuterike",
+      price: 1150,
+    },
+    school8: {
+      title: "Gjuha Shqipe 5. Fletore pune",
+      price: 800,
+    },
+  };
+
+  var cart = [];
+
+  function openPage(pageName, elmnt, color) {
+    // Hide all elements with class="tabcontent" by default */
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+
+    // Remove the background color of all tablinks/buttons
+    tablinks = document.getElementsByClassName("tablink");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].style.backgroundColor = "";
+    }
+
+    if (pageName === "MyCart") {
+      var table = document
+        .getElementById("cart")
+        .getElementsByTagName("tbody")[0];
+
+      let rowLength = table.rows.length;
+
+      for (let i = 0; i < rowLength; i++) {
+        table.deleteRow(-1);
+      }
+
+      let total = 0;
+      for (const item of cart) {
+        var row = table.insertRow();
+
+        // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+
+        cell1.innerHTML = item.title;
+        cell2.innerHTML = item.count;
+        cell3.innerHTML = item.count * item.price;
+
+        total = total + item.count * item.price;
+      }
+
+      document.getElementById("total").innerHTML = total + " DEN";
+    }
+
+    // Show the specific tab content
+    document.getElementById(pageName).style.display = "block";
+
+    // Add the specific color to the button used to open the tab content
+    elmnt.style.backgroundColor = color;
+  }
+
+  function addToCart(id) {
+    // console.log(books[id].title)
+    let found = false;
+    for (let i = 0; i < cart.length; i++) {
+      if (cart[i].id === id) {
+        found = true;
+        cart[i].count++;
+      }
+    }
+
+    if (!found) {
+      cart.push({
+        title: books[id].title,
+        img: id,
+        id: id,
+        price: books[id].price,
+        count: 1,
+      });
+    }
+  }
+
+  // Get the element with id="defaultOpen" and click on it
+  document.getElementById("defaultOpen").click();
+</script>
+
+<button class="tablink" onclick="openPage('Kids', this, 'red')">
+  Libra per femije
+</button>
+<button
+  class="tablink"
+  onclick="openPage('Adults', this, 'green')"
+  id="defaultOpen"
+>
+  Letersi per te rritur
+</button>
+<button class="tablink" onclick="openPage('School', this, 'blue')">
+  Libra shkollore
+</button>
+<button class="tablink" onclick="openPage('MyCart', this, 'blueviolet')">
+  Shporta ime
+</button>
+
+<div id="Kids" class="tabcontent" style="display: block">
+  <div class="books-wrapper">
+    <div class="book">
+      <img src="./images/kid1.jpg" alt="" width="100%" height="200" />
+      <p class="title">Nikolasi i vogël në pushimet verore</p>
+      <p class="price">400 DEN</p>
+      <button onclick="addToCart('kid1')">+ Shto ne karte</button>
+      <p
+        title="Vazhdon seria e Nikolasit të vogël: Kësaj radhe në fokus janë pushimet. Me aventurat e tij gjatë pushimeve veorre do të zbaviteni dhe do të shkriheni përsëri së qeshuri. “Vendimin se ku do t’i kalojmë pushimet e merr babi, edhe pse në fund shkojmë aty ku dëshiron mama”."
+        class="desc"
+      >
+        Vazhdon seria e Nikolasit të vogël: Kësaj radhe në fokus janë pushimet.
+        Me aventurat e tij gjatë pushimeve veorre do të zbaviteni dhe do të
+        shkriheni përsëri...
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/kid2.jpg" alt="" width="100%" height="200" />
+      <p class="title">Tregime të moçme shqiptare</p>
+      <p class="price">650 DEN</p>
+      <button onclick="addToCart('kid2')">+ Shto ne karte</button>
+      <p
+        title="Një kryevepër e magjisë popullore shqiptare që vjen në filitrin rrëfimtar të Mitrush Kutelit: Një nga librat më të shitur të dy dekadave të fundit; një rekomandim i përhershëm për fëmijët dhe një zgjidhje briliante për të kuptuar ashtin e fantazisë shqiptare"
+        class="desc"
+      >
+        Një kryevepër e magjisë popullore shqiptare që vjen në filitrin
+        rrëfimtar të Mitrush Kutelit: Një nga librat më të shitur të dy dekadave
+        të fundit; një rekomandim i përhershëm për fëmijët dhe një zgjidhje
+        briliante për të kuptuar ashtin e fantazisë shqiptare.
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/kid3.jpg" alt="" width="100%" height="200" />
+      <p class="title">Pushimet e Çufos</p>
+      <p class="price">450 DEN</p>
+      <button onclick="addToCart('kid3')">+ Shto ne karte</button>
+      <p
+        title="Leximi i “Çufoja dhe bubi Kaçurrel”, “Çufoja në shtëpinë e çudirave”, “Filmi i gjeneral Çufos” dhe “Pushimet e Çufos” ka bërë që ky personazh të mbijetojë dhe të bëjë prapësira për afro tre dekada. Por, besoj se shumëkush do ta shijojë edhe pjesën e aventurave të personazhit tonë aq të dashur gjatë pushimeve verore."
+        class="desc"
+      >
+        Leximi i “Çufoja dhe bubi Kaçurrel”, “Çufoja në shtëpinë e çudirave”,
+        “Filmi i gjeneral Çufos” dhe “Pushimet e Çufos” ka bërë që ky personazh
+        të mbijetojë dhe të bëjë prapësira për afro tre dekada. Por, besoj se
+        shumëkush do ta shijojë edhe pjesën e aventurave të personazhit tonë aq
+        të dashur gjatë pushimeve verore.
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/kid4.jpg" alt="" width="100%" height="200" />
+      <p class="title">Aventurat e Tom Sojerit</p>
+      <p class="price">700 DEN</p>
+      <button onclick="addToCart('kid4')">+ Shto ne karte</button>
+      <p
+        title="Është shumë e vështirë që të gjesh një fëmijë që të ketë kaluar moshën e fëmijërisë pa Tom Sojerin. Nëse je prind, këtë libër duhet ta lexosh edhe vetë, por duhet t’ia rekomandosh së pari fëmijës tënd…. Ç’pret!"
+        class="desc"
+      >
+        Është shumë e vështirë që të gjesh një fëmijë që të ketë kaluar moshën e
+        fëmijërisë pa Tom Sojerin. Nëse je prind, këtë libër duhet ta lexosh
+        edhe vetë, por duhet t’ia rekomandosh së pari fëmijës tënd…. Ç’pret!
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/kid5.jpg" alt="" width="100%" height="200" />
+      <p class="title">Ditari i Gregut 9 – Çomeni ne shtepi</p>
+      <p class="price">850 DEN</p>
+      <button onclick="addToCart('kid5')">+ Shto ne karte</button>
+      <p
+        title="Një udhëtim me familjen, mendohet si një ngjarje shumë dëfryese…..me përjashtim të rastit kur je me Heflet. Ky libër është një bombë për lexuesit ngurrues dhe këdo që kërkon një libër për të qeshur pa fund..!"
+        class="desc"
+      >
+        Një udhëtim me familjen, mendohet si një ngjarje shumë dëfryese…..me
+        përjashtim të rastit kur je me Heflet. Ky libër është një bombë për
+        lexuesit ngurrues dhe këdo që kërkon një libër për të qeshur pa fund..!
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/kid6.jpg" alt="" width="100%" height="200" />
+      <p class="title">Vendi i rrefenjave</p>
+      <p class="price">600 DEN</p>
+      <button onclick="addToCart('kid6')">+ Shto ne karte</button>
+      <p
+        title="Libri i tretë i serisë së shumëshitur “Vendi i Rrëfenjave” i vë binjakët në sprovë, ndërsa ata bëjnë bashkë të dyja botët!"
+        class="desc"
+      >
+        Libri i tretë i serisë së shumëshitur “Vendi i Rrëfenjave” i vë binjakët
+        në sprovë, ndërsa ata bëjnë bashkë të dyja botët!
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/kid7.jpg" alt="" width="100%" height="200" />
+      <p class="title">Agjencia Prindërore</p>
+      <p class="price">550 DEN</p>
+      <button onclick="addToCart('kid7')">+ Shto ne karte</button>
+      <p
+        title="Eja në agjencinë tonë dhe zgjidh mamin dhe babin e përkryer. Ky është ndër librat më të suksesshëm në Britaninë e Madhe që tashmë vjen edhe para lexuesve të vegjël shqiptarë: Ju garantojmë se ky libër do të ndikojë për mirë në harmoninë dhe lumturinë e familjes tuaj. Dhe, a e dini se pse?!!"
+        class="desc"
+      >
+        Eja në agjencinë tonë dhe zgjidh mamin dhe babin e përkryer. Ky është
+        ndër librat më të suksesshëm në Britaninë e Madhe që tashmë vjen edhe
+        para lexuesve të vegjël shqiptarë: Ju garantojmë se ky libër do të
+        ndikojë për mirë në harmoninë dhe lumturinë e familjes tuaj. Dhe, a e
+        dini se pse?!!
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/kid8.jpg" alt="" width="100%" height="200" />
+      <p class="title">Konradi</p>
+      <p class="price">650 DEN</p>
+      <button onclick="addToCart('kid8')">+ Shto ne karte</button>
+      <p
+        title="“Konradi – ose djali konservës” i shkrimtares austriake Christine Nöstlinger është një sukses botëror i jashtëzakonshëm, i përkthyer në më shumë se 20 gjuhë, tanimë vjen edhe në shqip, për të na rrëfyer historinë e një djali të dorëzuar gabimisht te dikush, që nuk dëshiron ta kthejë më mbrapsht. Ky libës konsiderohet si një leksion i shkëlqyer për mënyrën sesi prindërojmë dhe për raportet e fëmijës me prindërit."
+        class="desc"
+      >
+        “Konradi – ose djali konservës” i shkrimtares austriake Christine
+        Nöstlinger është një sukses botëror i jashtëzakonshëm, i përkthyer në më
+        shumë se 20 gjuhë, tanimë vjen edhe në shqip, për të na rrëfyer
+        historinë e një djali të dorëzuar gabimisht te dikush, që nuk dëshiron
+        ta kthejë më mbrapsht. Ky libës konsiderohet si një leksion i shkëlqyer
+        për mënyrën sesi prindërojmë dhe për raportet e fëmijës me prindërit.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div id="Adults" class="tabcontent">
+  <div class="books-wrapper">
+    <div class="book">
+      <img src="./images/adult1.jpg" alt="" width="100%" height="200" />
+      <p class="title">Burri që donte të vdiste...</p>
+      <p class="price">500 DEN</p>
+      <button onclick="addToCart('adult1')">+ Shto ne karte</button>
+      <p
+        title="Në këtë libër të ri Burri që donte të vdiste... të shkrimtarit Luan Rama, përveç romanit me të njëjtin tituli, i janë bashkangjitur edhe pesë tregime të shkurtra që hedhin dritë mbi drama të mëdha të shoqërisë shqiptare ndër vite. Një lloj tragjizmi ku në fund nuk mungon përpjekja për ta ndryshuar këtë botë përpëlitëse si dhe drita për një të ardhme ndryshe..."
+        class="desc"
+      >
+        Në këtë libër të ri "Burri që donte të vdiste..." të shkrimtarit Luan
+        Rama, përveç romanit me të njëjtin tituli, i janë bashkangjitur edhe
+        pesë tregime të shkurtra që hedhin dritë mbi drama të mëdha të shoqërisë
+        shqiptare ndër vite. Një lloj tragjizmi ku në fund nuk mungon përpjekja
+        për ta ndryshuar këtë botë përpëlitëse si dhe drita për një të ardhme
+        ndryshe...
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/adult2.jpg" alt="" width="100%" height="200" />
+      <p class="title">Zhdukja e Jozef Mengelesë</p>
+      <p class="price">800 DEN</p>
+      <button onclick="addToCart('adult2')">+ Shto ne karte</button>
+      <p
+        title="Jozef Mengele (Engjëlli i Vdekjes), ish-torturuesi i Aushvicit, më 1949 mbërrin në Argjentinë. I fshehur pas pseudonimeve të ndryshme, ai beson se mund rë krijojë një jetë të re në Buenos-Ajres. Për tri dekada me radhë, ai jetoi i qetë në Amerikën ejugut, ndonëse kishte kryer eksperimente nga më të tmerrshmet mbi të burgosurit e Aushvicit. Ai kishte aftësinë të ishte gjithnjë disa hapa para agjentëve të Mosadit, policisë ndërkombëtare dhe gazetarëve nga mbarë bota... Në këtë roman të bazuar në hulumtime rogoroze pothuajse tërësisht në dokumentet historike, Olivier Guez ndjek gjurmët e Mengelesë gjatë viteve të largimit të tij nga Europa. Zhdukja e Jozef Mengelesë e vë lexuesin në një kërkim lëtrar në gjurmët e një prej figurave më të pahijshmë dhe kriminale të shekullit të njëzetë."
+        class="desc"
+      >
+        Jozef Mengele (Engjëlli i Vdekjes), ish-torturuesi i Aushvicit, më 1949
+        mbërrin në Argjentinë. I fshehur pas pseudonimeve të ndryshme, ai beson
+        se mund rë krijojë një jetë të re në Buenos-Ajres. Për tri dekada me
+        radhë, ai jetoi i qetë në Amerikën ejugut, ndonëse kishte kryer
+        eksperimente nga më të tmerrshmet mbi të burgosurit e Aushvicit. Ai
+        kishte aftësinë të ishte gjithnjë disa hapa para agjentëve të Mosadit,
+        policisë ndërkombëtare dhe gazetarëve nga mbarë bota... Në këtë roman të
+        bazuar në hulumtime rogoroze pothuajse tërësisht në dokumentet
+        historike, Olivier Guez ndjek gjurmët e Mengelesë gjatë viteve të
+        largimit të tij nga Europa. Zhdukja e Jozef Mengelesë e vë lexuesin në
+        një kërkim lëtrar në gjurmët e një prej figurave më të pahijshmë dhe
+        kriminale të shekullit të njëzetë.
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/adult3.jpg" alt="" width="100%" height="200" />
+      <p class="title">Përtej</p>
+      <p class="price">450 DEN</p>
+      <button onclick="addToCart('adult3')">+ Shto ne karte</button>
+      <p
+        title="Romani i Natsuo Kirino Përtej tregon një histori rrëqethëse krimi në periferi të Tokios. Katër gra punojnë në turnin e natës në një fabrikë ku përgatiten dhe paketohen ushqime të gatshme. Të ngarkuara deri në fyt me punë dhe me borxhe, të izoluara nga bashkëshortët dhe fërnijët, të gjitha ëndërrojnë të gjejnë një zgjidhje në jetën e tyre pa rrugëdalje. Një nënë e re në kulmin e dëshpërimit vret bashkëshortin e saj imoral dhe kumarxhi dhe i rrëfen krimin njërës prej kolegeve të saj, Masako Katorit. Masako e ndihmon shoqen e saj duke kërkuar ndihmën e shoqeve të tjera që të copëtojnë trupin dhe të zhdukin provat pa lënë asnjë gjurmë të viktimës. Kur policia zbulon disa pjesë të trupit, problemet ndërlikohen edhe më shumë. Katërgratë, bashkëpunëtore në krim, përveç policisë duhet të shqetësohen edhe për një fajdexhi që ka lidhje me jakuzan, i cili pasi zbulon sekretin e tyre do ta përdorë për përfitimet e veta. Romani merr një kthesë të papritur tensionuese kur katër gratë vihen në shënjestren e pamëshirshme të pronarit të një klubi nate, të cilit policia i ka ngarkuar krimin. Për shkaktë tyre ai ka humbur gjithçka dhe tani është i etur për hakmarrje. Përtej është një thriller psikologjik që zbulon skutat më të errëta të shpirtit njerëzor, një përkujtues turbullues që dëshira e dëshpëruar për liri mund të bëjë edhe njeriun më të zakonshëm të bëjë të paimagjinueshmen. Natsuo Kirino, e quajtur ndryshe si mbretëresha e romaneve të krimit japonez zotëron me mjeshtëri humorin e zi në këtë narratim gozhdues por edhe kompleks, e cila kombinon një vështrim bindës në botën e hikshme të jakuzës me një portretizim të shkëlqyer të psikologjisë së krimit të dhunshëm."
+        class="desc"
+      >
+        Romani i Natsuo Kirino "Përtej" tregon një histori rrëqethëse krimi në
+        periferi të Tokios. Katër gra punojnë në turnin e natës në një fabrikë
+        ku përgatiten dhe paketohen ushqime të gatshme. Të ngarkuara deri në fyt
+        me punë dhe me borxhe, të izoluara nga bashkëshortët dhe fërnijët, të
+        gjitha ëndërrojnë të gjejnë një zgjidhje në jetën e tyre pa rrugëdalje.
+        Një nënë e re në kulmin e dëshpërimit vret bashkëshortin e saj imoral
+        dhe kumarxhi dhe i rrëfen krimin njërës prej kolegeve të saj, Masako
+        Katorit. Masako e ndihmon shoqen e saj duke kërkuar ndihmën e shoqeve të
+        tjera që të copëtojnë trupin dhe të zhdukin provat pa lënë asnjë gjurmë
+        të viktimës. Kur policia zbulon disa pjesë të trupit, problemet
+        ndërlikohen edhe më shumë. Katërgratë, bashkëpunëtore në krim, përveç
+        policisë duhet të shqetësohen edhe për një fajdexhi që ka lidhje me
+        jakuzan, i cili pasi zbulon sekretin e tyre do ta përdorë për përfitimet
+        e veta. Romani merr një kthesë të papritur tensionuese kur katër gratë
+        vihen në shënjestren e pamëshirshme të pronarit të një klubi nate, të
+        cilit policia i ka ngarkuar krimin. Për shkaktë tyre ai ka humbur
+        gjithçka dhe tani është i etur për hakmarrje. "Përtej" është një
+        thriller psikologjik që zbulon skutat më të errëta të shpirtit njerëzor,
+        një përkujtues turbullues që dëshira e dëshpëruar për liri mund të bëjë
+        edhe njeriun më të zakonshëm të bëjë të paimagjinueshmen. Natsuo Kirino,
+        e quajtur ndryshe si "mbretëresha e romaneve të krimit japonez" zotëron
+        me mjeshtëri humorin e zi në këtë narratim gozhdues por edhe kompleks, e
+        cila kombinon një vështrim bindës në botën e hikshme të jakuzës me një
+        portretizim të shkëlqyer të psikologjisë së krimit të dhunshëm.
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/adult4.jpg" alt="" width="100%" height="200" />
+      <p class="title">Pas xhamit të dyfishtë</p>
+      <p class="price">750 DEN</p>
+      <button onclick="addToCart('adult4')">+ Shto ne karte</button>
+      <p
+        title="Nga dritaret me xham të dyfishtë të apartamentit të saj në Reikjavik, një grua e moshuar vështron jetën nga e cila tanimë ndihet e përjashtuar. Një jetë e vrullshme dhe e zhurmshme, që vazhdon ta tërheqë, të ngrejë pyetje e t'i ushqejë urinë për të tjera elite, si dhe dëshirën e saj për të qenë pjesë e së tashmes. Ajo është e ve, ka fëmijë që e duan, por që prej kohësh ndjekin jetën e tyre, ka nipër të rritur, tashmë të largët. Monotonia e ditëve të saj thyhet kur hyn në skenë një burrë, i cili, pa drojë, e miklon dhe e kërkon, duke e bërë të ndiejë edhe një herë dalldinë e dëshirimit dhe të përkrahjes. Por, a është e pranueshme, e dëshirueshme apo edhe e mundur, tekefundit, të dashurohesh në moshën e saj? Çfarë mund t'u ofrojë dashuria dy jetëve vetmitare në zgrip të tyre? Pse pasioni i të moshuarve mbetet tabu, edhe në sytë e miqve dhe të familjarëve, diçka që duhet mohuar ose kritikuar si një tekë? Pas xhamit të dyfishtë është një këngë dashurie delikate për gjallërinë e shpirtit, që nuk i bindet vyshkjes së trupit, një rrëfim poetik e i ndjeshëm për largësinë e panevojshme që krijohet mes brezave, si dhe thekson se ndjenjat nuk plaken kurrë. Është një histori e vjetër, një burrë takon një grua. Vetëm kaq dimë të bejmë? [...] Sigurisht, nuk kishte dëshirë t'i kthehej rinisë. E ka kuptuar çfarë duan të gjithë, pasi kapërcehet gjysma ejetës. Është e rëndësishme të hiqesh sikurje aty, i pranishëm, qoftë edhe me përpjekje mbinjerëzore. Të qeshurat duhet ta gënjejnë vdekjen... dhe vdekja me mefshtësinë e saj mendon: pritpak, këtu nuk ka vend për mua... këtu janë të gjithë shend e verë."
+        class="desc"
+      >
+        Nga dritaret me xham të dyfishtë të apartamentit të saj në Reikjavik,
+        një grua e moshuar vështron jetën nga e cila tanimë ndihet e
+        përjashtuar. Një jetë e vrullshme dhe e zhurmshme, që vazhdon ta
+        tërheqë, të ngrejë pyetje e t'i ushqejë urinë për të tjera elite, si dhe
+        dëshirën e saj për të qenë pjesë e së tashmes. Ajo është e ve, ka fëmijë
+        që e duan, por që prej kohësh ndjekin jetën e tyre, ka nipër të rritur,
+        tashmë të largët. Monotonia e ditëve të saj thyhet kur hyn në skenë një
+        burrë, i cili, pa drojë, e miklon dhe e kërkon, duke e bërë të ndiejë
+        edhe një herë dalldinë e dëshirimit dhe të përkrahjes. Por, a është e
+        pranueshme, e dëshirueshme apo edhe e mundur, tekefundit, të dashurohesh
+        në moshën e saj? Çfarë mund t'u ofrojë dashuria dy jetëve vetmitare në
+        zgrip të tyre? Pse pasioni i të moshuarve mbetet tabu, edhe në sytë e
+        miqve dhe të familjarëve, diçka që duhet mohuar ose kritikuar si një
+        tekë? "Pas xhamit të dyfishtë" është një këngë dashurie delikate për
+        gjallërinë e shpirtit, që nuk i bindet vyshkjes së trupit, një rrëfim
+        poetik e i ndjeshëm për largësinë e panevojshme që krijohet mes brezave,
+        si dhe thekson se ndjenjat nuk plaken kurrë. Është një histori e vjetër,
+        një burrë takon një grua. Vetëm kaq dimë të bejmë? [...] Sigurisht, nuk
+        kishte dëshirë t'i kthehej rinisë. E ka kuptuar çfarë duan të gjithë,
+        pasi kapërcehet gjysma ejetës. Është e rëndësishme të hiqesh sikurje
+        aty, i pranishëm, qoftë edhe me përpjekje mbinjerëzore. Të qeshurat
+        duhet ta gënjejnë vdekjen... dhe vdekja me mefshtësinë e saj mendon:
+        pritpak, këtu nuk ka vend për mua... këtu janë të gjithë shend e verë.
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/adult5.jpg" alt="" width="100%" height="200" />
+      <p class="title">Kafe e hidhur</p>
+      <p class="price">600 DEN</p>
+      <button onclick="addToCart('adult5')">+ Shto ne karte</button>
+      <p
+        title="Sytë e mëdhenj dhe të thellë në formë bajameje, fytyra me tipare të rregullta, flokët e dendur ngjyrëgështenjë: bukuria e Marisë është nga ato që e magjepsin atë që hedh sytë mbi të, pikërisht ashtu siç i ndodhi Pietro Sales - që bië në dashuri me të me shikim të parë dhe kërkon dorën e saj pa pyetur për pajën - dhe, në mënyrë më pak të dukshme, mikut Xhozue, që është rritur nga babai i saj, dhe që Maria e konsideron një farë vëllai të madh. Maria është vetëm pesëmbëdhjetë vjeçe, Pietroja tridhjetë e katër; ai është një qejfli i pasur të cilit i pëlqejnë udhëtimet, bixhozi dhe femrat; ajo rrjedh nga një familje socialiste me ideale të mëdha por me mjete të kufizuara. Megjithatë, martesa me Pietron rezulton një zgjedhje e lumtur: jashtë mureve të shtëpisë Maria zbulon një kuptim më të gjërë të jetës, një liri të jetuari që përkon me një perceptim të thellë të së drejtës për tëe pëlqyer dhe për t'u pëlqyer. Nëpërmjet erosit, vjen për të njohja e vetes dhe e dëshirave të veta, si edhe hapja ndaj të bukurës dhe ndaj një ndjenje shumë personale të drejtësisë. Gjatë një pushimi në Tripoli, Maria zbulon edhe se nga çfarë përbëhet marrëdhënia, që deri atëhere në errësirë, e kishte lidhur me Xhozuenë. Fillon një histori e zjarrtë dashurie që mbulon më shumë së njëzet vjet takimesh, ndarjesh,kuvendesh të fshehta në pritje të një paqeje tëre. Ishte bërë flakë ajo dorë, edhe pëllëmba e saj të përvëlonte. E kuptuan"
+        class="desc"
+      >
+        Sytë e mëdhenj dhe të thellë në formë bajameje, fytyra me tipare të
+        rregullta, flokët e dendur ngjyrëgështenjë: bukuria e Marisë është nga
+        ato që e magjepsin atë që hedh sytë mbi të, pikërisht ashtu siç i ndodhi
+        Pietro Sales - që bië në dashuri me të me shikim të parë dhe kërkon
+        dorën e saj pa pyetur për pajën - dhe, në mënyrë më pak të dukshme,
+        mikut Xhozue, që është rritur nga babai i saj, dhe që Maria e konsideron
+        një farë vëllai të madh. Maria është vetëm pesëmbëdhjetë vjeçe, Pietroja
+        tridhjetë e katër; ai është një qejfli i pasur të cilit i pëlqejnë
+        udhëtimet, bixhozi dhe femrat; ajo rrjedh nga një familje socialiste me
+        ideale të mëdha por me mjete të kufizuara. Megjithatë, martesa me
+        Pietron rezulton një zgjedhje e lumtur: jashtë mureve të shtëpisë Maria
+        zbulon një kuptim më të gjërë të jetës, një liri të jetuari që përkon me
+        një perceptim të thellë të së drejtës për tëe pëlqyer dhe për t'u
+        pëlqyer. Nëpërmjet erosit, vjen për të njohja e vetes dhe e dëshirave të
+        veta, si edhe hapja ndaj të bukurës dhe ndaj një ndjenje shumë personale
+        të drejtësisë. Gjatë një pushimi në Tripoli, Maria zbulon edhe se nga
+        çfarë përbëhet marrëdhënia, që deri atëhere në errësirë, e kishte lidhur
+        me Xhozuenë. Fillon një histori e zjarrtë dashurie që mbulon më shumë së
+        njëzet vjet takimesh, ndarjesh,kuvendesh të fshehta në pritje të një
+        paqeje tëre. "Ishte bërë flakë ajo dorë, edhe pëllëmba e saj të
+        përvëlonte. E kuptuan".
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/adult6.jpg" alt="" width="100%" height="200" />
+      <p class="title">Letërsia dhe Zotat</p>
+      <p class="price">900 DEN</p>
+      <button onclick="addToCart('adult6')">+ Shto ne karte</button>
+      <p
+        title="I shkelqyer,i frymzuar, plot erudicion te lavdishem, Letersia dhe zotat eshte kulmi i studimeve te jetes te Roberto Calassos, per vendin dhe rolin qe kane zotat ne imagjinaten njerezore. Duke zbuluar peshperimen hyjnore qe fshihet pas poezise dhe prozes me te mire qe vjen nga shekujt, Calasso na jep nje ndjesi te perterire te misterit dhe magjise te letersise se madhe. Nga debimi i zotave klasike pergjate Epokes se Arsyes qe bene Romantiket ne emer te emancipimit dhe me vone, vendi i tyre ne letersine e kohes sone, historia e zotave mund te lexohet si nje histori e shenjuar dhe e shkelqyer e vete frymezimit letrar. Duke riperseritur kete histori, Calasso shperfaq nje hapesire te shenjte per letersine ku prania e zotave eshte e dallueshme. Peremtimet e tij per natyren e letersise absolute na shpien ne sferat e Dionisit dhe Orfeut, Baudelaire-it dhe Mallarme-se dhe nxitin nje mbrojtje te paster dhe te pasionuar te formes poetike, madje edhe kur ajo u shkeput dukshem nga çdo funksion i saj shoqeror. Lirike dhe e plote, Letersia dhe zotat eshte nje akt i fuqishem i afirmimit letrar qe meriton te lexohet se bashku me kryeveprat qe nderohen ketu."
+        class="desc"
+      >
+        I shkelqyer,i frymzuar, plot erudicion te lavdishem, Letersia dhe zotat
+        eshte kulmi i studimeve te jetes te Roberto Calassos, per vendin dhe
+        rolin qe kane zotat ne imagjinaten njerezore. Duke zbuluar peshperimen
+        hyjnore qe fshihet pas poezise dhe prozes me te mire qe vjen nga
+        shekujt, Calasso na jep nje ndjesi te perterire te misterit dhe magjise
+        te letersise se madhe. Nga debimi i zotave klasike pergjate Epokes se
+        Arsyes qe bene Romantiket ne emer te emancipimit dhe me vone, vendi i
+        tyre ne letersine e kohes sone, historia e zotave mund te lexohet si nje
+        histori e shenjuar dhe e shkelqyer e vete frymezimit letrar. Duke
+        riperseritur kete histori, Calasso shperfaq nje hapesire te shenjte per
+        letersine ku prania e zotave eshte e dallueshme. Peremtimet e tij per
+        natyren e "letersise absolute" na shpien ne sferat e Dionisit dhe
+        Orfeut, Baudelaire-it dhe Mallarme-se dhe nxitin nje mbrojtje te paster
+        dhe te pasionuar te formes poetike, madje edhe kur ajo u shkeput dukshem
+        nga çdo funksion i saj shoqeror. Lirike dhe e plote, Letersia dhe zotat
+        eshte nje akt i fuqishem i afirmimit letrar qe meriton te lexohet se
+        bashku me kryeveprat qe nderohen ketu.
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/adult7.jpg" alt="" width="100%" height="200" />
+      <p class="title">Të sapomartuarit</p>
+      <p class="price">590 DEN</p>
+      <button onclick="addToCart('adult7')">+ Shto ne karte</button>
+      <p
+        title="Romani Të porsamartuarit, i shkrimtares Ethel Turner, rrëfen fillimin e martesës së dy të rinjve të dashuruar, që zanafillën e njohjes së tyre e kishin që nga fëmijeria e hershme. Lindja e fëmijës, e kësaj krijese të dashur për të dy prindërit e rinj, sjell një marrëdhënie të re midis ciftit në raportet gjinore në familje. Tema kryesore në romanin Të porsamartuarit është përpjekja e prindërve për të gjetur vendin e duhur në familje. Ky libër është gjithashtu një kujtesë e mirë e përgjegjësive që duhen të kenë çiftet e reja në ditët e sotme."
+        class="desc"
+      >
+        Romani "Të porsamartuarit", i shkrimtares Ethel Turner, rrëfen fillimin
+        e martesës së dy të rinjve të dashuruar, që zanafillën e njohjes së tyre
+        e kishin që nga fëmijeria e hershme. Lindja e fëmijës, e kësaj krijese
+        të dashur për të dy prindërit e rinj, sjell një marrëdhënie të re midis
+        ciftit në raportet gjinore në familje. Tema kryesore në romanin "Të
+        porsamartuarit është përpjekja e prindërve për të gjetur vendin e duhur
+        në familje. Ky libër është gjithashtu një kujtesë e mirë e përgjegjësive
+        që duhen të kenë çiftet e reja në ditët e sotme.
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/adult8.jpg" alt="" width="100%" height="200" />
+      <p class="title">Dhoma e endëses</p>
+      <p class="price">450 DEN</p>
+      <button onclick="addToCart('adult8')">+ Shto ne karte</button>
+      <p
+        title="Këtë herë, me romanin e saj të ri, Cristina Caboni hyn në fushën e modës, për të treguar me emocion historinë e Kamilës, Marianës dhe sidomos Katerina Fraut, të vetëquajtur Maribela, një stiliste që gjatë Luftës së Dytë Botërore njihej si Endesja e ëndrrave. Rrobat e saj kishin gjithmonë vënde të fshehta, me kuletëza të përshtatshme për të ruajtur sekretet dhe ëndrrat e personit që i vishte. Kamila, që prej disa kohesh jeton dhe punon në një atelie në Belaxhio, befas është e detyruar të braktisë gjithçka, sepse Mariana, gruaja që e rriti si ta kishte bijë, ka nevojë për mbështetjen e saj. Në një baule të vjetër, Mariana ruan një fustan të qepur nga duart e Maribelës: aty Kamila gjen një qese të vogël, me një frazë urimi për një jetë të lumtur. Është e vetmja gjurmë që Mariana ka për të gjetur motrën, të cilën nuk e njohu kurrë. Kamila nuk e di çfare lidhjeje mund të ketë mes Maribelës dhe motrës së Marianës. Por është e gatshme të bëjë gjithçka për ta gjetur. Dhe intuita nuk e gënjen: Parisi është vendi prej nga nis kërkimin; stofrat, pëlhurat dhe skicat janë udha që duhet ndjekur. Një rrugë gjarpërore, po aq e nderlikuar sa çdo fill ngjarjesh nga e kaluara. Sepse misteret që presin të zbulohen janë në çdo cep. Sepse Maribela luftoi për të mbrojtur idetë e veta. Sepse, duke ndjekur gjurmët, Kamila rrëmon brenda vetes, ku rreh një zemër, që as gjilpëra më e mprehtë nuk mund ta gërvishte. Dhoma e endëses është libri i duhur për të gjithë ata që duan të ëndërrojnë, por janë të bindur se edhe ëndrrat mund të bëhen realitet, për ata që duan të zbulojnë dhe të mesojnë për fusha të reja, për ata që janë entuziaste për modën, por mbi të gjitha për ata që duan histori emocionuese dhe të shkruara me art."
+        class="desc"
+      >
+        Këtë herë, me romanin e saj të ri, Cristina Caboni hyn në fushën e
+        modës, për të treguar me emocion historinë e Kamilës, Marianës dhe
+        sidomos Katerina Fraut, të vetëquajtur Maribela, një stiliste që gjatë
+        Luftës së Dytë Botërore njihej si "Endesja e ëndrrave". Rrobat e saj
+        kishin gjithmonë vënde të fshehta, me kuletëza të përshtatshme për të
+        ruajtur sekretet dhe ëndrrat e personit që i vishte. Kamila, që prej
+        disa kohesh jeton dhe punon në një atelie në Belaxhio, befas është e
+        detyruar të braktisë gjithçka, sepse Mariana, gruaja që e rriti si ta
+        kishte bijë, ka nevojë për mbështetjen e saj. Në një baule të vjetër,
+        Mariana ruan një fustan të qepur nga duart e Maribelës: aty Kamila gjen
+        një qese të vogël, me një frazë urimi për një jetë të lumtur. Është e
+        vetmja gjurmë që Mariana ka për të gjetur motrën, të cilën nuk e njohu
+        kurrë. Kamila nuk e di çfare lidhjeje mund të ketë mes Maribelës dhe
+        motrës së Marianës. Por është e gatshme të bëjë gjithçka për ta gjetur.
+        Dhe intuita nuk e gënjen: Parisi është vendi prej nga nis kërkimin;
+        stofrat, pëlhurat dhe skicat janë udha që duhet ndjekur. Një rrugë
+        gjarpërore, po aq e nderlikuar sa çdo fill ngjarjesh nga e kaluara.
+        Sepse misteret që presin të zbulohen janë në çdo cep. Sepse Maribela
+        luftoi për të mbrojtur idetë e veta. Sepse, duke ndjekur gjurmët, Kamila
+        rrëmon brenda vetes, ku rreh një zemër, që as gjilpëra më e mprehtë nuk
+        mund ta gërvishte. Dhoma e endëses është libri i duhur për të gjithë ata
+        që duan të ëndërrojnë, por janë të bindur se edhe ëndrrat mund të bëhen
+        realitet, për ata që duan të zbulojnë dhe të mesojnë për fusha të reja,
+        për ata që janë entuziaste për modën, por mbi të gjitha për ata që duan
+        histori emocionuese dhe të shkruara me art.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div id="School" class="tabcontent">
+  <div class="books-wrapper">
+    <div class="book">
+      <img src="./images/school1.jpg" alt="" width="100%" height="200" />
+      <p class="title">Biologjia Për maturën shtetërore</p>
+      <p class="price">850 DEN</p>
+      <button onclick="addToCart('school1')">+ Shto ne karte</button>
+      <p title="Biologjia Për maturën shtetërore" class="desc">
+        Biologjia Për maturën shtetërore
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/school2.jpg" alt="" width="100%" height="200" />
+      <p class="title">Ushtrime Ekonomia 12</p>
+      <p class="price">900 DEN</p>
+      <button onclick="addToCart('school2')">+ Shto ne karte</button>
+      <p title="Ushtrime Ekonomia 12" class="desc">Ushtrime Ekonomia 12</p>
+    </div>
+
+    <div class="book">
+      <img src="./images/school3.jpg" alt="" width="100%" height="200" />
+      <p class="title">Olimpiada shkolla e mesme</p>
+      <p class="price">450 DEN</p>
+      <button onclick="addToCart('school3')">+ Shto ne karte</button>
+      <p title="Olimpiada shkolla e mesme" class="desc">
+        Olimpiada shkolla e mesme
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/school4.jpg" alt="" width="100%" height="200" />
+      <p class="title">Matematika 3</p>
+      <p class="price">850 DEN</p>
+      <button onclick="addToCart('school4')">+ Shto ne karte</button>
+      <p title="Matematika 3 " class="desc">Matematika 3</p>
+    </div>
+
+    <div class="book">
+      <img src="./images/school5.jpg" alt="" width="100%" height="200" />
+      <p class="title">Pushimet verore 3</p>
+      <p class="price">950 DEN</p>
+      <button onclick="addToCart('school5')">+ Shto ne karte</button>
+      <p
+        title="Njohuritë e fituara në procesin e veprimtarisë aktive përvetësohen shumë më lehtë e në mënyrë më të qëndrueshme, sesa gjatë të mësuarit traditional. Për nxënësit e klasës së tretë një veprimtari e tillë, para së gjithash është loja, ndaj dhe libri ynë PUSHIMET VERORE është mbështetur në parimin MESOJMË PËRMES LOJËS DHE ARGËTIMIT! Testet, detyrat, ushtrimet, fjalëkryqet, rebuset, enigmat, lojërat argëtuese, diktimet aritmetike të këtij botimi janë pikërisht vendi ku mësimi ndërthuret me argëtimin. Materiali mësimor që zhvillohet në klasën e tretë është përpunuar në 4 teste për secilën nga lëndët kryesore: gjuhë shqipe, matematikë, diruri natyre, (gjithsej 16 teste, 2 për çdo javë gjatë dy muajve të pushimeve: korrik, gusht), si dhe në 15 lojëra argëtuese. Testet, detyrat, lojërat nuk jepen në formën e tekstit të zhveshur, por kryesisht me zgjedhje alternativash, me qëllimin që nxënësi t'i zgjidhë i pavarur ose me ndihmën minimale të të rriturve. Synimi i autorëve ka qenë që libri PUSHIMET VERORE të bëhet një udhëtim tërheqës në botën e dijeve të nxënësve, një ndihmës i pazëvendësueshëm për kontrollin dhe përsëritjen e njohurive të fituara gjatë vitit shkollor, të nxitë tek ata etjen për dije e t'i ndihmojë për rrirjen e qëndrueshmërisë së përvetësimit të programit të klasës përkatëse. Libri është i dobishëm edhe gjatë vitit shkollor. Ai mund të përdoret për punë kolektive dhe individuale në shtëpi e në klasë. Do të jemi mirënjohës, nëse këtë libër ua rekomandoni shokëve apo shoqeve tuaja! PUSHIME TË MBARA!"
+        class="desc"
+      >
+        Njohuritë e fituara në procesin e veprimtarisë aktive përvetësohen shumë
+        më lehtë e në mënyrë më të qëndrueshme, sesa gjatë të mësuarit
+        traditional. Për nxënësit e klasës së tretë një veprimtari e tillë, para
+        së gjithash është loja, ndaj dhe libri ynë "PUSHIMET VERORE" është
+        mbështetur në parimin MESOJMË PËRMES LOJËS DHE ARGËTIMIT! Testet,
+        detyrat, ushtrimet, fjalëkryqet, rebuset, enigmat, lojërat argëtuese,
+        diktimet aritmetike të këtij botimi janë pikërisht vendi ku mësimi
+        ndërthuret me argëtimin. Materiali mësimor që zhvillohet në klasën e
+        tretë është përpunuar në 4 teste për secilën nga lëndët kryesore: gjuhë
+        shqipe, matematikë, diruri natyre, (gjithsej 16 teste, 2 për çdo javë
+        gjatë dy muajve të pushimeve: korrik, gusht), si dhe në 15 lojëra
+        argëtuese. Testet, detyrat, lojërat nuk jepen në formën e tekstit të
+        zhveshur, por kryesisht me zgjedhje alternativash, me qëllimin që
+        nxënësi t'i zgjidhë i pavarur ose me ndihmën minimale të të rriturve.
+        Synimi i autorëve ka qenë që libri "PUSHIMET VERORE" të bëhet një
+        udhëtim tërheqës në botën e dijeve të nxënësve, një ndihmës i
+        pazëvendësueshëm për kontrollin dhe përsëritjen e njohurive të fituara
+        gjatë vitit shkollor, të nxitë tek ata etjen për dije e t'i ndihmojë për
+        rrirjen e qëndrueshmërisë së përvetësimit të programit të klasës
+        përkatëse. Libri është i dobishëm edhe gjatë vitit shkollor. Ai mund të
+        përdoret për punë kolektive dhe individuale në shtëpi e në klasë. Do të
+        jemi mirënjohës, nëse këtë libër ua rekomandoni shokëve apo shoqeve
+        tuaja! PUSHIME TË MBARA!
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/school6.jpg" alt="" width="100%" height="200" />
+      <p class="title">Matematika për maturën shtetërore</p>
+      <p class="price">1050 DEN</p>
+      <button onclick="addToCart('school6')">+ Shto ne karte</button>
+      <p title="Matematika për maturën shtetërore" class="desc">
+        Matematika për maturën shtetërore
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/school7.jpg" alt="" width="100%" height="200" />
+      <p class="title">Hyrje në gjuhësinë kompjuterike</p>
+      <p class="price">1150 DEN</p>
+      <button onclick="addToCart('school7')">+ Shto ne karte</button>
+      <p title="Hyrje në gjuhësinë kompjuterike " class="desc">
+        Hyrje në gjuhësinë kompjuterike
+      </p>
+    </div>
+
+    <div class="book">
+      <img src="./images/school8.jpg" alt="" width="100%" height="200" />
+      <p class="title">Gjuha Shqipe 5. Fletore pune</p>
+      <p class="price">800 DEN</p>
+      <button onclick="addToCart('school8')">+ Shto ne karte</button>
+      <p title="Gjuha Shqipe 5. Fletore pune" class="desc">
+        Gjuha Shqipe 5. Fletore pune
+      </p>
+    </div>
+  </div>
+</div>
+
+<div id="MyCart" class="tabcontent">
+  <h3>Shporta me librat qe ju keni zgjedhur</h3>
+  <hr style="color: white" />
+
+  <table width="70%" id="cart">
+    <thead>
+      <tr>
+        <th style="text-align: left">Titulli</th>
+        <th style="text-align: left">Sasia</th>
+        <th style="text-align: left">Cmimi</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <hr />
+  <p id="total">0</p>
+  <button>Bli</button>
+</div>
